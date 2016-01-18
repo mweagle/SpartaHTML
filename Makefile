@@ -31,7 +31,9 @@ get: clean ensure_vendor
 	rm -rf ./src/main/vendor/github.com/mjibson/esc/.git
 	git clone --depth=1 https://github.com/mweagle/Sparta ./vendor/github.com/mweagle/Sparta
 	rm -rf ./src/main/vendor/github.com/mweagle/Sparta/.git
-
+	git clone --depth=1 https://github.com/mweagle/go-cloudformation ./vendor/github.com/mweagle/go-cloudformation
+	rm -rf ./src/main/vendor/github.com/mweagle/go-cloudformation/.git
+	
 build: get format vet generate
 	GO15VENDOREXPERIMENT=1 go build .
 
