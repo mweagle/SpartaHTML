@@ -41,20 +41,22 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-  <script src="sparta_apigateway.js"></script>
   <script type="text/javascript">
     var corsURL = null;
     $(document).ready(function() {
       try {
-        var spartaInfo = JSON.stringify(window.SpartaAPIGateway, null, ' ');
-        $("#spartaCode").text(spartaInfo);
-        corsURL = window.SpartaAPIGateway.APIGatewayURL.Value + "/hello";
-        $("#corsURL").attr("placeholder", corsURL);
-        $("#corsFormGroup").hide();
+        $.getJSON( "MANIFEST.json", function( data ) {
+            console.log('MANIFEST.json data: ' + JSON.stringify(data))
+
+            var spartaInfo = JSON.stringify(data, null, ' ');
+            $("#spartaCode").text(spartaInfo);
+            corsURL = data.APIGatewayURL.Value + "/hello";
+            $("#corsURL").attr("placeholder", corsURL);
+            $("#corsFormGroup").hide();
+          });
       } catch (e) {
         console.error(e.toString());
       }
-
     });
 
     var corsRequest = function() {
@@ -109,14 +111,9 @@
       </div>
       <div class="panel-body">
         <p>The APIGateway has <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">CORS enabled</a> which enables Ajax requests.
-          If a service provisions an API Gateway, Sparta will create two configuration files at the S3 root to support dynamic discovery:
+          If a service provisions an API Gateway, Sparta will include a MANIFEST.json file with discovery information:
         <ul>
-          <li><a href="sparta_apigateway.js">sparta_apigateway.js</a>, which can be included as in: <p />
-            <pre>
-              <code class="html">&lt;script src=&quot;sparta_apigateway.js&quot;&gt;&lt;/script&gt;</code>
-            </pre>
-          </li>
-          <li><a href="sparta_apigateway.json">sparta_apigateway.json</a></li>
+          <li><a href="MANIFEST.json">MANIFEST.json</a></li>
         </ul>
         Try It!
        </p>
