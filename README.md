@@ -7,7 +7,7 @@
 
 ## Instructions
 
-1. `git clone git clone https://github.com/mweagle/SpartaHTML`
+1. `git clone https://github.com/mweagle/SpartaHTML`
 1. `cd SpartaHTML`
 1. `make get`
 1. `S3_BUCKET=<MY_S3_BUCKET_NAME> make provision`
