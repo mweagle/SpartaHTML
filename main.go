@@ -26,7 +26,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
-		_, err := apiGatewayResource.NewMethod("GET")
+		_, err := apiGatewayResource.NewMethod("GET", http.StatusOK)
 		if nil != err {
 			panic("Failed to create /hello resource")
 		}
