@@ -7,6 +7,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	sparta "github.com/mweagle/Sparta"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +49,8 @@ func main() {
 	s3Site, _ := sparta.NewS3Site("./resources")
 
 	// Deploy it
-	sparta.Main("SpartaHTML",
+	stackName := spartaCF.UserScopedStackName("SpartaHTML")
+	sparta.Main(stackName,
 		fmt.Sprintf("Sparta app that provisions a CORS-enabled API Gateway together with an S3 site"),
 		spartaLambdaFunctions(apiGateway),
 		apiGateway,

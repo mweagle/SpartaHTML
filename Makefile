@@ -47,7 +47,7 @@ explore:
 	go run main.go --level info explore
 
 provision:
-	go run main.go --level info provision --s3Bucket $(S3_BUCKET)
+	go run main.go --level info provision --s3Bucket ${S3_BUCKET}
 
 delete:
 	go run main.go --level info delete
