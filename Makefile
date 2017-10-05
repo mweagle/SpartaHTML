@@ -8,10 +8,6 @@ clean:
 	rm -rf ./vendor
 	go clean .
 
-format:
-	go fmt .
-	gofmt -s -w ./transforms/
-
 vet:
 	go vet .
 
@@ -22,7 +18,7 @@ get:
 	go get -u github.com/golang/dep/...
 	dep ensure
 
-build: get format vet generate
+build: get vet generate
 	go build .
 
 test: build
