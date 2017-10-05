@@ -13,17 +13,27 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 //
-func helloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-	logger.Info("Hello World: ", string(*event))
-	fmt.Fprint(w, string(*event))
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	var jsonMessage json.RawMessage
+	err := decoder.Decode(&jsonMessage)
+	if err != nil {
+		logger.Error("Failed to decode request: ", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	logger.Info("Hello World: ", string(jsonMessage))
+	w.Write(jsonMessage)
 }
 
 func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		http.HandlerFunc(helloWorld),
+		sparta.IAMRoleDefinition{})
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
@@ -32,7 +42,6 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 			panic("Failed to create /hello resource")
 		}
 	}
-
 	return append(lambdaFunctions, lambdaFn)
 }
 
