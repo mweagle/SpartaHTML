@@ -22,7 +22,7 @@ build: get vet generate
 	go build .
 
 test: build
-	go test ./test/...
+	go test -v .
 
 tags:
 	gotags -tag-relative=true -R=true -sort=true -f="tags" -fields=+l .

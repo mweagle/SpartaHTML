@@ -55,10 +55,10 @@
   revision = "0b12d6b5"
 
 [[projects]]
+  branch = "master"
   name = "github.com/mweagle/Sparta"
   packages = [".","aws","aws/cloudformation","aws/dynamodb","aws/iam","aws/s3","proxy","zip"]
-  revision = "1dc88835dbfc372ef7f3c9a3240b4817db220eea"
-  version = "0.20.0"
+  revision = "6a7c35d12bf62a7f107f468ec1960b490647ea50"
 
 [[projects]]
   branch = "master"
@@ -111,6 +111,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "283e3410b07449856e238412eca0adae0382793ee6d12ef04c161567b486ed4e"
+  inputs-digest = "f6655cf59806c674f623c7149b8d1507a1346c680c1693adf086d9029f1ab8a7"
   solver-name = "gps-cdcl"
   solver-version = 1
