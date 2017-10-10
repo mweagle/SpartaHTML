@@ -26,6 +26,7 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	logger.Info("Hello World: ", string(jsonMessage))
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(jsonMessage)
 }
 
