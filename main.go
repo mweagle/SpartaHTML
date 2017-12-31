@@ -58,10 +58,9 @@ func main() {
 	// Enable CORS s.t. the S3 site can access the resources
 	apiGateway.CORSOptions = &sparta.CORSOptions{
 		Headers: map[string]string{
-			"Access-Control-Allow-Headers":     "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
-			"Access-Control-Allow-Methods":     "*",
-			"Access-Control-Allow-Origin":      "*",
-			"Access-Control-Allow-Credentials": "http://localhost:3000",
+			"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
+			"Access-Control-Allow-Methods": "*",
+			"Access-Control-Allow-Origin":  "*",
 		},
 	}
 
