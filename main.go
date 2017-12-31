@@ -38,10 +38,13 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
-		_, err := apiGatewayResource.NewMethod("GET", http.StatusOK)
-		if nil != err {
-			panic("Failed to create /hello resource")
+		// We only return http status code
+		apiMethod, apiMethodErr := apiGatewayResource.NewMethod("GET", http.StatusOK, http.StatusInternalServerError)
+		if nil != apiMethodErr {
+			panic("Failed to create /hello resource: " + apiMethodErr.Error())
 		}
+		// Limit the incoming request types to JSON
+		apiMethod.SupportedRequestContentTypes = []string{"application/json"}
 	}
 	return append(lambdaFunctions, lambdaFn)
 }
@@ -53,7 +56,14 @@ func main() {
 	apiStage := sparta.NewStage("v1")
 	apiGateway := sparta.NewAPIGateway("SpartaHTML", apiStage)
 	// Enable CORS s.t. the S3 site can access the resources
-	apiGateway.CORSEnabled = true
+	apiGateway.CORSOptions = &sparta.CORSOptions{
+		Headers: map[string]string{
+			"Access-Control-Allow-Headers":     "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
+			"Access-Control-Allow-Methods":     "*",
+			"Access-Control-Allow-Origin":      "*",
+			"Access-Control-Allow-Credentials": "http://localhost:3000",
+		},
+	}
 
 	// Provision a new S3 bucket with the resources in the supplied subdirectory
 	s3Site, _ := sparta.NewS3Site("./resources")
