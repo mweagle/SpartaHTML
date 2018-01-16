@@ -11,7 +11,7 @@
 
 ## Result
 
-<div align="center"><img src="https://raw.githubusercontent.com/mweagle/SpartaHTML/master/site/screenshot.jpg" />
+<div align="center"><img src="https://raw.githubusercontent.com/mweagle/SpartaHTML/master/site/websitelanding.jpg" />
 </div>
 
 ## Credits
