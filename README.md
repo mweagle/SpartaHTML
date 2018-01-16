@@ -1,10 +1,6 @@
 # SpartaHTML
 [Sparta](https://github.com/mweagle/Sparta) application that demonstrates provisioning an S3 backed site with a CORS-enabled API Gateway
 
-<div align="center"><img src="https://raw.githubusercontent.com/mweagle/SpartaHTML/master/site/Sparta.gif" />
-</div>
-
-
 ## Instructions
 
 1. `git clone https://github.com/mweagle/SpartaHTML`
@@ -17,3 +13,10 @@
 
 <div align="center"><img src="https://raw.githubusercontent.com/mweagle/SpartaHTML/master/site/screenshot.jpg" />
 </div>
+
+## Credits
+
+<ul>
+  <li><a target="_blank" href="https://templated.co/spatial">Spatial HTML Template</a></li>
+  <li><a target="_blank" href="https://unsplash.com/photos/iMxsCt2rxAQ">Joseph Chan - Photographer</a></li>
+</ul>

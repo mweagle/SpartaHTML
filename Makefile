@@ -15,17 +15,13 @@ generate:
 	go generate -x
 
 get:
-	go get -u github.com/golang/dep/...
-	dep ensure
+	go get -u -v ./...
 
 build: get vet generate
 	go build .
 
 test: build
 	go test -v .
-
-tags:
-	gotags -tag-relative=true -R=true -sort=true -f="tags" -fields=+l .
 
 explore:
 	go run main.go --level info explore
