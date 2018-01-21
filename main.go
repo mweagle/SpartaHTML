@@ -7,19 +7,20 @@ import (
 
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaAPIG "github.com/mweagle/Sparta/aws/events"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
 type helloWorldResponse struct {
 	Message string
-	Request map[string]interface{}
+	Request spartaAPIG.APIGatewayRequest
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 func helloWorld(ctx context.Context,
-	incomingEvent map[string]interface{}) (helloWorldResponse, error) {
+	gatewayEvent spartaAPIG.APIGatewayRequest) (helloWorldResponse, error) {
 
 	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
 	if loggerOk {
@@ -28,7 +29,7 @@ func helloWorld(ctx context.Context,
 	// Return a message, together with the incoming input...
 	return helloWorldResponse{
 		Message: fmt.Sprintf("Hello world 🌏"),
-		Request: incomingEvent,
+		Request: gatewayEvent,
 	}, nil
 }
 
