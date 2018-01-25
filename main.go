@@ -6,31 +6,45 @@ import (
 	"net/http"
 
 	sparta "github.com/mweagle/Sparta"
+	spartaAPIG "github.com/mweagle/Sparta/aws/apigateway"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaAPIG "github.com/mweagle/Sparta/aws/events"
+	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
 type helloWorldResponse struct {
 	Message string
-	Request spartaAPIG.APIGatewayRequest
+	Request spartaAWSEvents.APIGatewayRequest
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 func helloWorld(ctx context.Context,
-	gatewayEvent spartaAPIG.APIGatewayRequest) (helloWorldResponse, error) {
+	gatewayEvent spartaAWSEvents.APIGatewayRequest) (*helloWorldResponse, *spartaAPIG.Error) {
+	/*
+			To return a JSON error object:
+
+		helloWorldErr := spartaAPIG.NewError(http.StatusInternalServerError)
+		helloWorldErr.Context["APIGatewayContext"] = gatewayEvent.Context
+		return nil, helloWorldErr
+
+		You can also create custom error types, so long as they
+		include the http.StatusText(code) somewhere in the response body. This
+		reserved value is what Sparta uses as a RegExp to determine
+		the Integration Mapping value
+	*/
 
 	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
 	if loggerOk {
 		logger.Info("Hello world structured log message")
 	}
 	// Return a message, together with the incoming input...
-	return helloWorldResponse{
+	return &helloWorldResponse{
 		Message: fmt.Sprintf("Hello world 🌏"),
 		Request: gatewayEvent,
 	}, nil
+
 }
 
 func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
@@ -45,7 +59,7 @@ func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 		// We only return http.StatusOK
 		apiMethod, apiMethodErr := apiGatewayResource.NewMethod("GET",
 			http.StatusOK,
-			http.StatusOK)
+			http.StatusInternalServerError)
 		if nil != apiMethodErr {
 			panic("Failed to create /hello resource: " + apiMethodErr.Error())
 		}
