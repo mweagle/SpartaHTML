@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	sparta "github.com/mweagle/Sparta"
-	spartaAPIG "github.com/mweagle/Sparta/aws/apigateway"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -21,30 +20,30 @@ type helloWorldResponse struct {
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 func helloWorld(ctx context.Context,
-	gatewayEvent spartaAWSEvents.APIGatewayRequest) (*helloWorldResponse, *spartaAPIG.Error) {
+	gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) {
 	/*
-			To return a JSON error object:
+		 To return an error back to the client using a standard HTTP status code:
 
-		helloWorldErr := spartaAPIG.NewError(http.StatusInternalServerError)
-		helloWorldErr.Context["APIGatewayContext"] = gatewayEvent.Context
-		return nil, helloWorldErr
+			errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
+			"Something failed inside here")
+			return errorResponse, nil
 
-		You can also create custom error types, so long as they
-		include the http.StatusText(code) somewhere in the response body. This
-		reserved value is what Sparta uses as a RegExp to determine
-		the Integration Mapping value
+			You can also create custom error response types, so long as they
+			include `"code":HTTP_STATUS_CODE` somewhere in the response body.
+			This reserved expression is what Sparta uses as a RegExp to determine
+			the Integration Mapping value
 	*/
 
 	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
 	if loggerOk {
 		logger.Info("Hello world structured log message")
 	}
+
 	// Return a message, together with the incoming input...
 	return &helloWorldResponse{
 		Message: fmt.Sprintf("Hello world 🌏"),
 		Request: gatewayEvent,
 	}, nil
-
 }
 
 func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
