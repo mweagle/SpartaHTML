@@ -33,4 +33,4 @@ delete:
 	go run main.go --level info delete
 
 describe:
-	go run main.go --level info describe --out ./graph.html
+	go run main.go --level info describe --s3Bucket $(S3_BUCKET) --out ./graph.html
