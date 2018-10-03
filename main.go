@@ -12,6 +12,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+// CloudFront settings
+const subdomain = "sparta-site"
+
+// The domain managed by Route53.
+const domainName = "spartademo.net"
+
+// The site will be available at
+// https://sparta-site.spartademo.net
+
+// The S3 bucketname must match the subdomain.domain
+// name pattern to serve as a CloudFront Distribution target
+var bucketName = fmt.Sprintf("%s.%s", subdomain, domainName)
+
 type helloWorldResponse struct {
 	Message string
 	Request spartaAWSEvents.APIGatewayRequest
@@ -70,6 +84,27 @@ func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Decorator
+func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
+
+	// Commented out demonstration of how to front the site
+	// with a CloudFront distribution.
+	// Note that provisioning a distribution will incur additional
+	// costs
+	hooks := &sparta.WorkflowHooks{}
+	/*
+		siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
+			subdomain,
+			domainName,
+			gocf.String(os.Getenv("SPARTA_ACM_CLOUDFRONT_ARN")))
+		hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+			siteHookDecorator,
+		}
+	*/
+	return hooks
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
 	// Provision an S3 site
@@ -77,6 +112,7 @@ func main() {
 	if s3SiteErr != nil {
 		panic("Failed to create S3 Site")
 	}
+	s3Site.BucketName = gocf.String(bucketName)
 
 	// Register the function with the API Gateway
 	apiStage := sparta.NewStage("v1")
@@ -89,12 +125,14 @@ func main() {
 			"Access-Control-Allow-Origin":  gocf.GetAtt(s3Site.CloudFormationS3ResourceName(), "WebsiteURL"),
 		},
 	}
-
+	hooks := distroHooks(s3Site)
 	// Deploy it
 	stackName := spartaCF.UserScopedStackName("SpartaHTML")
-	sparta.Main(stackName,
+	sparta.MainEx(stackName,
 		fmt.Sprintf("SpartaHTML provisions a static S3 hosted website with an API Gateway resource backed by a custom Lambda function"),
 		spartaHTMLLambdaFunctions(apiGateway),
 		apiGateway,
-		s3Site)
+		s3Site,
+		hooks,
+		false)
 }
