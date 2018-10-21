@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+	spartaDecorators "github.com/mweagle/Sparta/decorator"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
@@ -92,15 +94,13 @@ func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
 	// Note that provisioning a distribution will incur additional
 	// costs
 	hooks := &sparta.WorkflowHooks{}
-	/*
-		siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
-			subdomain,
-			domainName,
-			gocf.String(os.Getenv("SPARTA_ACM_CLOUDFRONT_ARN")))
-		hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
-			siteHookDecorator,
-		}
-	*/
+	siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
+		subdomain,
+		domainName,
+		gocf.String(os.Getenv("SPARTA_ACM_CLOUDFRONT_ARN")))
+	hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+		siteHookDecorator,
+	}
 	return hooks
 }
 
